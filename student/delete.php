@@ -1,7 +1,7 @@
 <?php
 session_start();
 include('../header.php');
-
+include '../functions.php';
 // Initialize error message
 $errorMessage = "";
 
@@ -50,15 +50,12 @@ if (isset($_GET['student_id'])) {
     <title>Delete Student</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Style for the bordered container */
         .bordered-container {
-            border: 2px solid #ddd; /* Full border around the div */
-            padding: 20px;  /* Add some padding inside the div */
-            margin-top: 20px; /* Space between other elements */
-            border-radius: 8px; /* Optional: rounded corners */
+            border: 2px solid #ddd;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 8px;
         }
-
-        /* Set the background color of the page to white */
         body {
             background-color: white;
         }
@@ -67,7 +64,6 @@ if (isset($_GET['student_id'])) {
 <body>
 
 <div class="container mt-3">
-    <!-- Breadcrumb navigation -->
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="../dashboard.php">Dashboard</a></li>
@@ -83,7 +79,6 @@ if (isset($_GET['student_id'])) {
     <?php endif; ?>
 
     <?php if ($student): ?>
-        <!-- Add bordered container here -->
         <div class="bordered-container">
             <strong>Are you sure you want to delete the following student?</strong><br>
             <ul>
@@ -91,15 +86,10 @@ if (isset($_GET['student_id'])) {
                 <li><strong>First Name:</strong> <?= $student['first_name'] ?></li>
                 <li><strong>Last Name:</strong> <?= $student['last_name'] ?></li>
             </ul>
-        
-
-        <!-- Confirmation form inside bordered container -->
-        <div class="">
             <form action="delete.php?student_id=<?= $student['student_id'] ?>" method="POST">
                 <a href="register.php" class="btn btn-secondary">Cancel</a>
                 <button type="submit" name="confirm_delete" class="btn btn-primary">Delete Student Record</button>
             </form>
-        </div>
         </div>
     <?php endif; ?>
 </div>
@@ -110,6 +100,5 @@ if (isset($_GET['student_id'])) {
 </html>
 
 <?php
-// Include footer
 include('../footer.php');
 ?>

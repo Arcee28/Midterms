@@ -1,7 +1,7 @@
 <?php
+session_start();
 
 function addUser($email, $password) {
-    // You could integrate this with a database or a session-based user list.
     $_SESSION['users'][] = ["email" => $email, "password" => $password];
     return true;
 }
@@ -30,17 +30,6 @@ function updateUserPassword($email, $newPassword) {
     return false;
 }
 
-function getUserByEmail($email) {
-    if (isset($_SESSION['users'])) {
-        foreach ($_SESSION['users'] as $user) {
-            if ($user['email'] === $email) {
-                return $user;
-            }
-        }
-    }
-    return null;
-}
-
 function isLoggedIn() {
     return isset($_SESSION['email']) && $_SESSION['email'] !== '';
 }
@@ -50,24 +39,6 @@ function logout() {
     session_destroy();
     header("Location: index.php");
     exit;
-}
-
-function validateEmail($email) {
-    return filter_var($email, FILTER_VALIDATE_EMAIL);
-}
-
-function sendPasswordResetEmail($email) {
-    if (!validateEmail($email)) return false;
-
-    // Simulate sending a password reset link via email.
-    return "Password reset link sent to $email";
-}
-
-function validateSubjectData($subject_data) {
-    $errors = [];
-    if (empty($subject_data['subject_name'])) $errors[] = "Subject Name is required.";
-    if (empty($subject_data['subject_code'])) $errors[] = "Subject Code is required.";
-    return $errors;
 }
 
 function addSubject($subject_data) {
@@ -92,17 +63,6 @@ function deleteSubject($subject_code) {
         }
     }
     return false;
-}
-
-function getSubjectByCode($subject_code) {
-    if (isset($_SESSION['subjects'])) {
-        foreach ($_SESSION['subjects'] as $subject) {
-            if ($subject['subject_code'] === $subject_code) {
-                return $subject;
-            }
-        }
-    }
-    return null;
 }
 
 function validateStudentEnrollment($student_id, $subject_code) {
@@ -152,15 +112,12 @@ function removeStudentFromSubject($student_id, $subject_code) {
     return false;
 }
 
-// Check if the user is logged in, else redirect to login
 function guard() {
     if (empty($_SESSION['email']) && basename($_SERVER['PHP_SELF']) != 'index.php') {
-        // Only redirect if the user is not logged in and is trying to access a protected page
         header("Location: index.php"); 
         exit;
     }
 }
 
-guard(); // Use guard at the top of protected pages
-
+guard();
 ?>

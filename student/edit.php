@@ -1,6 +1,7 @@
 <?php
 session_start();
 include('../header.php');
+include '../functions.php';
 // Initialize error and success messages
 $errorMessages = [];
 $successMessage = "";
@@ -8,7 +9,7 @@ $successMessage = "";
 // Ensure student_id is passed in the URL
 if (isset($_GET['student_id'])) {
     $student_id = $_GET['student_id'];
-    
+
     // Find the student in the session array
     $student = null;
     foreach ($_SESSION['students'] as $s) {
@@ -18,7 +19,6 @@ if (isset($_GET['student_id'])) {
         }
     }
 
-    // If the student is not found, redirect or show an error message
     if ($student === null) {
         $errorMessages[] = "Student not found.";
     }
@@ -27,28 +27,25 @@ if (isset($_GET['student_id'])) {
 }
 
 // Handle form submission for editing the student
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if ($_POST['action'] == 'edit_student') {
-        $new_first_name = trim($_POST['first_name']);
-        $new_last_name = trim($_POST['last_name']);
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['action'] == 'edit_student') {
+    $new_first_name = trim($_POST['first_name']);
+    $new_last_name = trim($_POST['last_name']);
 
-        // Validate input
-        if (empty($new_first_name) || empty($new_last_name)) {
-            $errorMessages[] = "All fields are required.";
-        } else {
-            // Update the student data in the session
-            foreach ($_SESSION['students'] as &$s) {
-                if ($s['student_id'] == $student_id) {
-                    $s['first_name'] = $new_first_name;
-                    $s['last_name'] = $new_last_name;
-                    break;
-                }
+    // Validate input
+    if (empty($new_first_name) || empty($new_last_name)) {
+        $errorMessages[] = "All fields are required.";
+    } else {
+        // Update the student data in the session
+        foreach ($_SESSION['students'] as &$s) {
+            if ($s['student_id'] == $student_id) {
+                $s['first_name'] = $new_first_name;
+                $s['last_name'] = $new_last_name;
+                break;
             }
-            $successMessage = "Student details updated successfully!";
-            // Redirect back to register.php to see updated student list
-            header('Location: register.php');
-            exit();
         }
+        $successMessage = "Student details updated successfully!";
+        header('Location: register.php');
+        exit();
     }
 }
 ?>
@@ -61,29 +58,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title>Edit Student</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Custom border for the form */
         .form-container {
-            border: 2px solid #dee2e6; /* Light border color */
-            padding: 30px; /* Add padding inside the form */
-            border-radius: 8px; /* Rounded corners */
-            background-color: #ffffff; /* White background */
-            margin-top: 20px; /* Space above the form */
+            border: 2px solid #dee2e6;
+            padding: 30px;
+            border-radius: 8px;
+            background-color: #ffffff;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
 
 <div class="container mt-3">
-    
     <h3 class="text-left">Edit Student</h3>
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb mt-5">
-            <li class="breadcrumb-item"><a href="../dashboard.php">Dashboard</a></li> <!-- Go up one directory -->
+            <li class="breadcrumb-item"><a href="../dashboard.php">Dashboard</a></li>
             <li class="breadcrumb-item"><a href="register.php">Register Student</a></li>
             <li class="breadcrumb-item active" aria-current="page">Edit Student</li>
         </ol>
     </nav>
-
 
     <!-- Success message -->
     <?php if ($successMessage): ?>
@@ -133,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
 <?php
-// Include footer
 include('../footer.php');
 ?>

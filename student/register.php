@@ -1,44 +1,40 @@
 <?php
 session_start();
 include('../header.php');
+include '../functions.php';
 // Initialize error and success messages
 $errorMessages = [];
 $successMessage = "";
 
 // Handle form submission for adding a student
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if ($_POST['action'] == 'add_student') {
-        // Add student
-        $student_id = trim($_POST['student_id']);
-        $first_name = trim($_POST['first_name']);
-        $last_name = trim($_POST['last_name']);
-        
-        if (empty($student_id) || empty($first_name) || empty($last_name)) {
-            $errorMessages[] = "All fields are required.";
-        } else {
-            // Prevent re-adding student with the same ID
-            $exists = false;
-            foreach ($_SESSION['students'] as $student) {
-                if ($student['student_id'] == $student_id) {
-                    $exists = true;
-                    break;
-                }
-            }
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['action'] == 'add_student') {
+    $student_id = trim($_POST['student_id']);
+    $first_name = trim($_POST['first_name']);
+    $last_name = trim($_POST['last_name']);
 
-            if ($exists) {
-                $errorMessages[] = "Student ID '$student_id' already exists!";
-            } else {
-                $_SESSION['students'][] = [
-                    'student_id' => $student_id,
-                    'first_name' => $first_name,
-                    'last_name' => $last_name
-                ];
-                $successMessage = "Student added successfully!";
-                
-                // Redirect to the same page to avoid re-submission on refresh
-                header('Location: register.php');
-                exit(); // Stop further execution after redirect
+    if (empty($student_id) || empty($first_name) || empty($last_name)) {
+        $errorMessages[] = "All fields are required.";
+    } else {
+        // Prevent re-adding student with the same ID
+        $exists = false;
+        foreach ($_SESSION['students'] as $student) {
+            if ($student['student_id'] == $student_id) {
+                $exists = true;
+                break;
             }
+        }
+
+        if ($exists) {
+            $errorMessages[] = "Student ID '$student_id' already exists!";
+        } else {
+            $_SESSION['students'][] = [
+                'student_id' => $student_id,
+                'first_name' => $first_name,
+                'last_name' => $last_name
+            ];
+            $successMessage = "Student added successfully!";
+            header('Location: register.php');
+            exit(); // Stop further execution after redirect
         }
     }
 }
@@ -51,27 +47,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Management</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css"> <!-- Link to your external CSS file -->
     <style>
-    .bordered-container {
-    border: 2px solid #ddd; /* Full border around the div */
-    padding: 20px;  /* Add some padding inside the div */
-    margin-top: 20px; /* Space between other elements */
-    border-radius: 8px; /* Optional: rounded corners */
-}</style>
+        .bordered-container {
+            border: 2px solid #ddd;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+    </style>
 </head>
 <body>
 
 <div class="container mt-3">
-    <!-- Breadcrumb with clickable "Dashboard" link -->
+    <!-- Breadcrumb navigation -->
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb mt-5">
-            <li class="breadcrumb-item"><a href="../dashboard.php">Dashboard</a></li> <!-- Go up one directory -->
+            <li class="breadcrumb-item"><a href="../dashboard.php">Dashboard</a></li>
             <li class="breadcrumb-item active" aria-current="page">Register Student</li>
         </ol>
     </nav>
-
-    
 
     <!-- Success message -->
     <?php if ($successMessage): ?>
@@ -89,30 +83,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
     <?php endif; ?>
 
-    <!-- Add student form inside a bordered container with padding, shadow, and border radius -->
+    <!-- Add student form inside a bordered container -->
     <div class="bordered-container">
         <form method="POST">
-
-        <h3 class="text-left">Register a New Student</h3>
+            <h3 class="text-left">Register a New Student</h3>
             <input type="hidden" name="action" value="add_student">
-            
-            <!-- Add border above the Student ID field -->
-            <div class="">
+
+            <div class="form-group">
                 <label for="student_id">Student ID</label>
                 <input type="number" class="form-control" id="student_id" name="student_id" required>
             </div>
-            
+
             <div class="form-group">
                 <label for="first_name">First Name</label>
                 <input type="text" class="form-control" id="first_name" name="first_name" required>
             </div>
+
             <div class="form-group">
                 <label for="last_name">Last Name</label>
                 <input type="text" class="form-control" id="last_name" name="last_name" required>
             </div>
+
             <button type="submit" class="btn btn-primary">Add Student</button>
         </form>
-    </div> <!-- End of border-container -->
+    </div>
 
     <h3 class="mt-5">List of Students</h3>
 
@@ -135,10 +129,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <td><?= $student['first_name'] ?></td>
                             <td><?= $student['last_name'] ?></td>
                             <td>
-                                <!-- Edit button linking to edit.php with student_id -->
+                                <!-- Edit and delete options -->
                                 <a href="edit.php?student_id=<?= $student['student_id'] ?>" class="btn btn-warning btn-sm">Edit</a>
-
-                                <!-- Delete button: Redirect to delete.php with student_id as a query parameter -->
                                 <a href="delete.php?student_id=<?= $student['student_id'] ?>" class="btn btn-danger btn-sm">Delete</a>
 
                                 <!-- Attach subject button -->
@@ -157,15 +149,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <?php endif; ?>
             </tbody>
         </table>
-    </div> <!-- End of border-container -->
-
+    </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
 <?php
-// Include footer
 include('../footer.php');
 ?>
