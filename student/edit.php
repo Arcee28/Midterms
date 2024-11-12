@@ -1,6 +1,6 @@
 <?php
 session_start();
-
+include('../header.php');
 // Initialize error and success messages
 $errorMessages = [];
 $successMessage = "";
@@ -133,3 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+<?php
+// Include footer
+include('../footer.php');
+?>

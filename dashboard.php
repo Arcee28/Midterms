@@ -1,6 +1,5 @@
 <?php
 session_start();
-
 // Check if the user is logged in
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     header("Location: index.php");
@@ -15,7 +14,9 @@ if (isset($_POST['logout'])) {
     header("Location: index.php");
     exit();
 }
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">

@@ -1,6 +1,6 @@
 <?php
 session_start(); // Start the session at the beginning
-
+include('header.php');
 // Define valid credentials for demonstration (you may replace this with database checks)
 $validEmail = "user@gmail.com";  // Example email
 $validPassword = "password123";  // Example password (in real-world, it should be hashed)
