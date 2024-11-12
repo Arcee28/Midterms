@@ -1,7 +1,6 @@
 <?php
 session_start();
 include('../header.php');
-include '../functions.php';
 // Initialize error and success messages
 $errorMessages = [];
 $successMessage = "";
