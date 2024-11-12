@@ -3,7 +3,7 @@ session_start();
 
 // Check if the user is logged in
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-    header("Location: login.php");
+    header("Location: index.php");
     exit();
 }
 
@@ -12,7 +12,7 @@ if (isset($_POST['logout'])) {
     // Destroy the session and redirect to the login page
     session_unset(); // Unset all session variables
     session_destroy(); // Destroy the session
-    header("Location: login.php");
+    header("Location: index.php");
     exit();
 }
 ?>
@@ -26,9 +26,9 @@ if (isset($_POST['logout'])) {
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .welcome-message {
-            white-space: nowrap; 
-            overflow: hidden;    
-            text-overflow: ellipsis; 
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
     </style>
 </head>
@@ -54,8 +54,7 @@ if (isset($_POST['logout'])) {
                     <h5 class="card-title">Add a Subject</h5>
                 </div>
                 <div class="card-body">
-                    <p>This section allows you to add a new subject in the system. Click the
-                    button below to proceed with the adding process.</p>
+                    <p>This section allows you to add a new subject in the system. Click the button below to proceed with the adding process.</p>
                     <form action="add_subject.php" method="POST">
                         <button type="submit" class="btn btn-primary w-100">Add Subject</button>
                     </form>
@@ -70,13 +69,9 @@ if (isset($_POST['logout'])) {
                     <h5 class="card-title">Add a Student</h5>
                 </div>
                 <div class="card-body">
-                    <form action="add_student.php" method="POST">
-                        <div class="form-group">
-                            <p>This section allows you to register a new student in the system. Click
-                            the button below to proceed with the registration process.</p>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Add Student</button>
-                    </form>
+                    <p>This section allows you to register a new student in the system. Click the button below to proceed with the registration process.</p>
+                    <!-- Link to register.php for adding a student -->
+                    <a href="student/register.php" class="btn btn-primary w-100">Add Student</a>
                 </div>
             </div>
         </div>
