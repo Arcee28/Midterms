@@ -1,46 +1,96 @@
 <?php
-session_start(); // Start the session at the beginning
-include('header.php');
-// Define valid credentials for demonstration (you may replace this with database checks)
-$validEmail = "user@gmail.com";  // Example email
-$validPassword = "password123";  // Example password (in real-world, it should be hashed)
+session_start();
 
-// Initialize error messages
+// Block browser back button access to previously cached pages
+header("Cache-Control: no-store, no-cache, must-revalidate");  // Prevent caching
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");  // For HTTP/1.0 compatibility
+header("Expires: 0");  // For HTTP/1.0 compatibility
+
+// Check if the user is already logged in and redirect them to dashboard if so
+if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
+    header("Location: dashboard.php");
+    exit();
+}
+
+function getUsers() {
+    // This function should return an array of users with email and password.
+    return [
+        ["email" => "user1@gmail.com", "password" => "user1"],
+        ["email" => "user2@gmail.com", "password" => "user2"],
+        ["email" => "user3@example.com", "password" => "user3"],
+        ["email" => "user4@example.com", "password" => "user4"],
+        ["email" => "user5@example.com", "password" => "user5"]
+    ];
+}
+
+function validateLoginCredentials($email, $password) {
+    // Validate the email and password
+    $errors = [];
+
+    // Validate email
+    if (empty($email)) {
+        $errors[] = "Email is required.";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = "Invalid Email format.";
+    }
+
+    // Validate password
+    if (empty($password)) {
+        $errors[] = "Password is required.";
+    }
+
+    return $errors;
+}
+
+function checkLoginCredentials($email, $password, $users) {
+    // Check if the provided email and password match any in the users array
+    foreach ($users as $user) {
+        if ($user['email'] === $email && $user['password'] === $password) {
+            return true; // Valid credentials
+        }
+    }
+    return false; // Invalid credentials
+}
+
+function displayErrors($errors) {
+    // Display the errors in a formatted way
+    $output = "<ul>";
+    foreach ($errors as $error) {
+        $output .= "<li>" . htmlspecialchars($error) . "</li>";
+    }
+    $output .= "</ul>";
+    return $output;
+}
+
+// Check if the user is already logged in before showing login form
 $errorMessages = [];
-
-// Handle form submission
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // If login form is submitted
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Process the login form submission
     if (isset($_POST['submitlogin'])) {
-        // Sanitize email input
+        // Get form inputs
         $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
         $password = $_POST['password'];
 
-        // Validate email and password
-        if (empty($email)) {
-            $errorMessages[] = "Email is required.";
-        }
+        // Validate the credentials
+        $errorMessages = validateLoginCredentials($email, $password);
 
-        if (empty($password)) {
-            $errorMessages[] = "Password is required.";
-        }
-
-        // If no errors, validate credentials
+        // If validation passes, check the credentials against the users list
         if (empty($errorMessages)) {
-            if ($email === $validEmail && $password === $validPassword) {
-                // If credentials are valid, set session variables
+            $users = getUsers();
+            if (checkLoginCredentials($email, $password, $users)) {
+                // Store user session and redirect to dashboard
                 $_SESSION['logged_in'] = true;
                 $_SESSION['email'] = $email;
-
-                // Redirect to the dashboard page
                 header("Location: dashboard.php");
-                exit(); // Exit to ensure no further code is executed
+                exit();
             } else {
-                $errorMessages[] = "Invalid email or password. Please try again.";
+                $errorMessages[] = "Invalid email or password.";
             }
         }
     }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -54,15 +104,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
 
 <div class="container mt-5">
-    <!-- Error messages -->
+    <!-- Render error messages (if any) -->
     <?php if (!empty($errorMessages)): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <strong>System Errors:</strong>
-            <ul>
-                <?php foreach ($errorMessages as $message): ?>
-                    <li><?php echo $message; ?></li>
-                <?php endforeach; ?>
-            </ul>
+            <?php echo displayErrors($errorMessages); ?>
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
